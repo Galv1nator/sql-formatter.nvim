@@ -5,7 +5,7 @@
 local M = {}
 local utils = require("sql-formatter.utils")
 
-M.external_available = false
+vim.g.sqlformatter_external_available = false
 
 function M.setup(config)
   vim.g.sqlformatter_= config
@@ -20,8 +20,8 @@ function M.check_external_formatter()
   local handle = io.popen("which " .. cmd .. " 2>/dev/null")
   local result = handle:read("*a")
   handle:close()
-  M.external_available = result ~= ""
-  if not M.external_available then
+  vim.g.sqlformatter_external_available = result ~= ""
+  if not vim.g.sqlformatter_external_available then
     local install_msg = ""
     if cmd == "sql-formatter" then
       install_msg = "Install with: npm install -g sql-formatter"
@@ -34,12 +34,12 @@ function M.check_external_formatter()
       { title = "SQL Formatter" }
     )
   end
-  return M.external_available
+  return vim.g.sqlformatter_external_available
 end
 
 -- Format SQL using external formatter (sqlparse or sql-formatter)
 function M.format_with_external(text)
-  if not M.external_available then
+  if not vim.g.sqlformatter_external_available then
     return nil, "External formatter not available"
   end
   local cmd = vim.g.sqlformatter_external_formatter.command
@@ -132,7 +132,7 @@ end
 
 -- Main format function
 function M.format_sql(text)
-  if vim.g.sqlformatter_external_formatter.enabled and M.external_available then
+  if vim.g.sqlformatter_external_formatter.enabled and vim.g.sqlformatter_external_available then
     local result, err = M.format_with_external(text)
     if result then
       return result
