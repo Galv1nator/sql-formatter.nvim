@@ -3,7 +3,6 @@
 -- SQL Formatter Commands
 
 local M = {}
-local formatter = require("sql-vim.g.sqlformatter_formatter")
 
 
 function M.setup()
