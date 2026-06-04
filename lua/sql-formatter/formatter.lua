@@ -5,19 +5,18 @@
 local M = {}
 local utils = require("sql-formatter.utils")
 
-M.config = {}
 M.external_available = false
 
 function M.setup(config)
-  M.config = config
+  vim.g.sqlformatter_= config
 end
 
 -- Check if external formatter (sqlparse or sql-formatter) is available
 function M.check_external_formatter()
-  if not M.config.external_formatter.enabled then
+  if not vim.g.sqlformatter_external_formatter.enabled then
     return false
   end
-  local cmd = M.config.external_formatter.command
+  local cmd = vim.g.sqlformatter_external_formatter.command
   local handle = io.popen("which " .. cmd .. " 2>/dev/null")
   local result = handle:read("*a")
   handle:close()
@@ -43,8 +42,8 @@ function M.format_with_external(text)
   if not M.external_available then
     return nil, "External formatter not available"
   end
-  local cmd = M.config.external_formatter.command
-  local args = table.concat(M.config.external_formatter.args, " ")
+  local cmd = vim.g.sqlformatter_external_formatter.command
+  local args = table.concat(vim.g.sqlformatter_external_formatter.args, " ")
   local full_cmd
   if cmd == "sql-formatter" then
     -- sql-formatter expects input from stdin
@@ -69,7 +68,7 @@ end
 function M.format_with_lua(text)
   local formatted_lines = {}
   local indent_level = 0
-  local indent = M.config.indent or "  "
+  local indent = vim.g.sqlformatter_indent or "  "
   local clause_keywords = {
     "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING", "LIMIT", "OFFSET", "JOIN", "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "OUTER JOIN", "ON", "UNION", "VALUES", "SET", "INSERT", "UPDATE", "DELETE"
   }
@@ -101,7 +100,7 @@ function M.format_with_lua(text)
         indent_level = 0
       end
       local formatted_line = string.rep(indent, indent_level) .. trimmed
-      if M.config.uppercase then
+      if vim.g.sqlformatter_uppercase then
         formatted_line = M.format_keywords(formatted_line)
       end
       table.insert(formatted_lines, formatted_line)
@@ -133,7 +132,7 @@ end
 
 -- Main format function
 function M.format_sql(text)
-  if M.config.external_formatter.enabled and M.external_available then
+  if vim.g.sqlformatter_external_formatter.enabled and M.external_available then
     local result, err = M.format_with_external(text)
     if result then
       return result
@@ -167,7 +166,7 @@ function M.format_buffer()
   local line_count = vim.api.nvim_buf_line_count(buf)
   cursor[1] = math.min(cursor[1], line_count)
   vim.api.nvim_win_set_cursor(0, cursor)
-  if M.config.notify.enabled then
+  if vim.g.sqlformatter_notify.enabled then
     vim.notify("SQL formatted successfully", vim.log.levels.INFO, { title = "SQL Formatter" })
   end
 end
@@ -180,7 +179,7 @@ function M.format_range(start_line, end_line)
   local formatted = M.format_sql(text)
   local new_lines = vim.split(formatted, "\n")
   vim.api.nvim_buf_set_lines(buf, start_line - 1, end_line, false, new_lines)
-  if M.config.notify.enabled then
+  if vim.g.sqlformatter_notify.enabled then
     vim.notify("SQL range formatted successfully", vim.log.levels.INFO, { title = "SQL Formatter" })
   end
 end

@@ -5,10 +5,8 @@
 local M = {}
 local formatter = require("sql-formatter.formatter")
 
-M.config = {}
 
-function M.setup(config)
-  M.config = config
+function M.setup()
   M.create_autocmds()
 end
 
@@ -30,7 +28,7 @@ function M.create_autocmds()
   -- Set up buffer-local settings for SQL files
   vim.api.nvim_create_autocmd("FileType", {
     group = group,
-    pattern = table.concat(M.config.filetypes, ","),
+    pattern = table.concat(vim.g.sqlformatter_filetypes, ","),
     callback = function(args)
       vim.api.nvim_buf_set_option(args.buf, "commentstring", "-- %s")
     end,
@@ -40,7 +38,7 @@ end
 
 function M.get_pattern()
   local patterns = {}
-  for _, ft in ipairs(M.config.filetypes) do
+  for _, ft in ipairs(vim.g.sqlformatter_filetypes) do
     table.insert(patterns, "*." .. ft)
   end
   return patterns
@@ -51,7 +49,7 @@ function M.should_format_on_save(buf)
   if buf_setting ~= nil then
     return buf_setting
   end
-  return M.config.format_on_save
+  return vim.g.sqlformatter_format_on_save
 end
 
 return M

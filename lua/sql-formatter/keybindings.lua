@@ -5,13 +5,13 @@ local M = {}
 local formatter = require("sql-formatter.formatter")
 local utils = require("sql-formatter.utils")
 
-function M.setup(config)
-  if not config.keybindings then
+function M.setup()
+  if not vim.g.sqlformatter_keybindings then
     return
   end
-  
-  M.setup_global_keymaps(config.keybindings)
-  M.setup_buffer_keymaps(config)
+
+  M.setup_global_keymaps(vim.g.sqlformatter_keybindings)
+  M.setup_buffer_keymaps()
 end
 
 function M.setup_global_keymaps(keybindings)
@@ -20,14 +20,14 @@ function M.setup_global_keymaps(keybindings)
       formatter.format_buffer()
     end, { desc = "Format SQL buffer", silent = true })
   end
-  
+
   if keybindings.format_selection then
     vim.keymap.set("v", keybindings.format_selection, function()
       local start_line, end_line = utils.get_visual_selection()
       formatter.format_range(start_line, end_line)
     end, { desc = "Format SQL selection", silent = true })
   end
-  
+
   if keybindings.toggle_format_on_save then
     vim.keymap.set("n", keybindings.toggle_format_on_save, function()
       require("sql-formatter.commands").toggle_format_on_save()
@@ -35,14 +35,14 @@ function M.setup_global_keymaps(keybindings)
   end
 end
 
-function M.setup_buffer_keymaps(config)
+function M.setup_buffer_keymaps()
   vim.api.nvim_create_autocmd("FileType", {
-    pattern = table.concat(config.filetypes, ","),
+    pattern = table.concat(vim.g.sqlformatter_filetypes, ","),
     callback = function(args)
       local opts = { buffer = args.buf, silent = true }
-      
-      if config.keybindings.format_buffer then
-        vim.keymap.set("n", config.keybindings.format_buffer, function()
+
+      if vim.g.sqlformatter_keybindings.format_buffer then
+        vim.keymap.set("n", vim.g.sqlformatter_keybindings.format_buffer, function()
           formatter.format_buffer()
         end, vim.tbl_extend("force", opts, { desc = "Format SQL buffer" }))
       end
