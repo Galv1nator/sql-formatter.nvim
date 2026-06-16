@@ -1,9 +1,9 @@
 -- author: anvndev
--- https://github.com/andev0x/sql-vim.g.sqlformatter_nvim
+-- https://github.com/andev0x/sql-sqlformatter.nvim
 -- SQL Formatter Commands
 
 local M = {}
-
+local formatter = require("sql-formatter.formatter")
 
 function M.setup()
   M.create_commands()
@@ -12,14 +12,14 @@ end
 function M.create_commands()
   -- SQLFormat command
   vim.api.nvim_create_user_command("SQLFormat", function()
-    vim.g.sqlformatter_format_buffer()
+    formatter.format_buffer()
   end, {
     desc = "Format SQL in current buffer"
   })
 
   -- SQLFormatRange command
   vim.api.nvim_create_user_command("SQLFormatRange", function(opts)
-    vim.g.sqlformatter_format_range(opts.line1, opts.line2)
+    formatter.format_range(opts.line1, opts.line2)
   end, {
     range = true,
     desc = "Format SQL in selected range"
