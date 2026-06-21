@@ -5,7 +5,7 @@ local M = {}
 
 -- Default configuration
 M.default_opts = {
-  format_on_save = true,
+  format_on_save = false,
   dialect = "postgresql",
   indent = "  ",
   tab_width = 2,

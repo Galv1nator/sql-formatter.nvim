@@ -7,7 +7,7 @@ local M = {}
 -- Check if a buffer contains SQL content
 function M.is_sql_buffer(buf)
   buf = buf or vim.api.nvim_get_current_buf()
-  local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+  local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf} )
 
   local sql_filetypes = { "sql", "mysql", "plsql", "pgsql" }
 

@@ -14,7 +14,7 @@ function M.setup(opts)
   -- require("sql-formatter.formatter").setup()
   require("sql-formatter.commands").setup()
   require("sql-formatter.autocmds").setup()
-  require("sql-formatter.keybindings").setup()
+  -- require("sql-formatter.keybindings").setup()
 
   -- Check if external formatter is available
    if vim.g["sqlformatter_external_formatter"] and
