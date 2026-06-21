@@ -30,7 +30,8 @@ function M.create_autocmds()
     group = group,
     pattern = table.concat(vim.g.sqlformatter_filetypes, ","),
     callback = function(args)
-      vim.api.nvim_buf_set_option(args.buf, "commentstring", "-- %s")
+      -- vim.api.nvim_buf_set_option(args.buf, "commentstring", "-- %s")
+      vim.api.nvim_set_option_value("commentstring", "-- %s",{buf = args.buf})
     end,
     desc = "Set up SQL buffer settings",
   })
